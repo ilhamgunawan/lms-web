@@ -36,7 +36,7 @@ export interface CurrentRoleResponse {
 
 export function fetchLogin(body: LoginRequest) {
   return axios({
-    url: 'http://localhost:7002/auth/login',
+    url: 'http://localhost:7002/api/v1/auth/login',
     method: 'post',
     withCredentials: true,
     data: body,
@@ -45,15 +45,15 @@ export function fetchLogin(body: LoginRequest) {
 
 export function fetchLogout() {
   return axios({
-    url: 'http://localhost:7002/auth/logout',
-    method: 'post',
+    url: 'http://localhost:7002/api/v1/auth/logout',
+    method: 'delete',
     withCredentials: true,
   });
 }
 
 export function fetchValidateSession() {
   return axios({
-    url: 'http://localhost:7002/auth/validate-session',
+    url: 'http://localhost:7002/api/v1/auth/session',
     method: 'get',
     withCredentials: true,
   });
@@ -61,7 +61,7 @@ export function fetchValidateSession() {
 
 export function fetchCurrentRole() {
   return axios({
-    url: 'http://localhost:7002/auth/current-role',
+    url: 'http://localhost:7002/api/v1/auth/role',
     method: 'get',
     withCredentials: true,
   });

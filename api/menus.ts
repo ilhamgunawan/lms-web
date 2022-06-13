@@ -16,7 +16,7 @@ export interface FetchMenusResponse {
 
 export function fetchMenus() {
   return axios({
-    url: 'http://localhost:7002/menus',
+    url: 'http://localhost:7002/api/v1/menus',
     method: 'get',
     withCredentials: true,
   });
