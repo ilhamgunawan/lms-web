@@ -30,8 +30,16 @@ export interface LogoutResponse {
   message: string;
 }
 
+export interface Role {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export interface CurrentRoleResponse {
-  role: 'admin' | 'teacher' | 'student';
+  data: {
+    role: Role;
+  }
 }
 
 export function fetchLogin(body: LoginRequest) {
