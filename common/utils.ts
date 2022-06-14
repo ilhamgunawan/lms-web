@@ -23,11 +23,11 @@ export const getIcon = (name: string) => {
   switch(name) {
     case 'Dashboard':
       return FiHome;
-    case 'Users':
+    case 'User Management':
       return FiUsers;
     case 'Roles':
       return FiUserCheck;
-    case 'Courses':
+    case 'Course Management':
       return FiBookOpen;
     default:
       return FiHome;
