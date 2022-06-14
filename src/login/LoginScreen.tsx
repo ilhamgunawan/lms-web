@@ -95,30 +95,30 @@ export default function LoginLayout() {
     },
   });
 
-  const menus = useMutation(fetchMenus, {
-    onError: (_error: AxiosError<ErrorResponse>, _variables, _context) => {
-      dispatch({
-        type: 'FETCH_MENUS_ERROR',
-        payload: {
-          error: initialState.error,
-        },
-      });
-    },
-    onSuccess: (res: AxiosResponse<FetchMenusResponse>, _variables, _context) => {
-      dispatch({
-        type: 'FETCH_MENUS_SUCCESS',
-        payload: {
-          menus: res.data.menus, 
-          error: '',
-        },
-      });
-    },
-  });
+  // const menus = useMutation(fetchMenus, {
+  //   onError: (_error: AxiosError<ErrorResponse>, _variables, _context) => {
+  //     dispatch({
+  //       type: 'FETCH_MENUS_ERROR',
+  //       payload: {
+  //         error: initialState.error,
+  //       },
+  //     });
+  //   },
+  //   onSuccess: (res: AxiosResponse<FetchMenusResponse>, _variables, _context) => {
+  //     dispatch({
+  //       type: 'FETCH_MENUS_SUCCESS',
+  //       payload: {
+  //         menus: res.data.menus, 
+  //         error: '',
+  //       },
+  //     });
+  //   },
+  // });
 
   const reducerConfig = {
     loginFetcher: (body: LoginRequest) => login.mutate(body),
     validateSessionFetcher: () => validateSession.mutate(),
-    menusFetcher: () => menus.mutate(),
+    // menusFetcher: () => menus.mutate(),
     useToast: toast,
     router: router,
   };

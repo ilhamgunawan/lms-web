@@ -2,7 +2,16 @@ import { Dispatch } from 'react';
 import { NextRouter } from 'next/router';
 import { UseToastOptions } from '@chakra-ui/react';
 import { LoginRequest } from '../../api/auth';
-import { Menu } from '../../api/menus';
+// import { Menu } from '../../api/menus';
+import menuJson from '../menus/menus.json';
+
+export interface Menu {
+  id: string;
+  name: string;
+  parent_id: string | null;
+  path: string | null;
+  roles: Array<string>;
+}
 
 export type StateType = 
   | 'INITIAL' 
@@ -121,7 +130,7 @@ export function reducer(state: State, action: Action): State {
 interface ReducerConfig {
   loginFetcher: (body: LoginRequest) => void;
   validateSessionFetcher: () => void;
-  menusFetcher: () => void;
+  // menusFetcher: () => void;
   useToast: (options: UseToastOptions) => void;
   router: NextRouter;
 }
@@ -159,6 +168,13 @@ export function onStateChange(
           error: '', 
         },
       });
+      dispatch({
+        type: 'FETCH_MENUS_SUCCESS',
+        payload: {
+          menus: menuJson,
+          error: '',
+        }
+      })
       break;
     case 'FETCHING_LOGIN_ERROR':
       reducerConfig.useToast({
@@ -167,9 +183,9 @@ export function onStateChange(
         position: 'top',
       });
       break;
-    case 'FETCHING_MENUS':
-      reducerConfig.menusFetcher();
-      break;
+    // case 'FETCHING_MENUS':
+    //   reducerConfig.menusFetcher();
+    //   break;
     case 'FETCHING_MENUS_SUCCESS':
       window.localStorage.setItem('menus', JSON.stringify(state.menus));
       reducerConfig.router.replace('/');
