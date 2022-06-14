@@ -42,7 +42,7 @@ export default function RouteProtection(props: Props) {
       dispatch({
         type: 'FETCH_CURRENT_ROLE_SUCCESS',
         payload: {
-          protection: validateRoles(props.allowedRoles, res.data.role),
+          protection: validateRoles(props.allowedRoles, res.data.data.role.name),
           error: {
             code: '',
             message: '',
