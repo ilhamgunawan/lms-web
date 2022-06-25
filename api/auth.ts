@@ -10,16 +10,20 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface LoginResponse {
-  message: string;
-  token: string;
-  user: {
+export interface LoginData {
+  id: string;
+  name: string;
+  email: string;
+  role: {
     id: string;
     name: string;
-    email: string;
-    avatar: string | null;
-    roles: Array<RoleUser>;
-  }
+  };
+}
+
+export interface LoginResponse {
+  data: LoginData;
+  message: string;
+  status: string;
 }
 
 export interface ValidateSessionResponse {
