@@ -6,6 +6,8 @@ import { useToast, Spinner } from '@chakra-ui/react';
 import { ErrorResponse } from '../../api/global';
 import { CurrentRoleResponse, fetchCurrentRole } from '../../api/auth';
 import { reducer, onStateChange, initialState, Protection } from './route-protection-reducer';
+import LoadingScreen from '../loading/LoadingScreen';
+import GeneralErrorScreen from '../error/GeneralErrorScreen';
 
 type AllowedRoles = 
   | 'admin'
@@ -62,18 +64,76 @@ export default function RouteProtection(props: Props) {
     onStateChange(state, dispatch, reducerConfig);
   }, [state.type]);
 
-  return (
-    <>
-      {state.type === 'INITIAL' && <Spinner />}
-      {state.type === 'FETCHING_CURRENT_ROLE' && <Spinner />}
-      {state.type === 'FETCHING_CURRENT_ROLE_SUCCESS' &&
-        <>
-          {state.payload.protection === 'ACCEPT' && props.children}
-          {state.payload.protection === 'DENY' && <h1>DENY</h1>}
-          {state.payload.protection === 'UNDEFINED' && <h1>UNDEFINED</h1>}
-        </>
+  switch(state.type) {
+    case 'INITIAL':
+      return <LoadingScreen />;
+    case 'FETCHING_CURRENT_ROLE':
+      return <LoadingScreen />;
+    case 'FETCHING_CURRENT_ROLE_SUCCESS':
+      switch(state.payload.protection) {
+        case 'ACCEPT':
+          return <>{props.children}</>;
+        case 'DENY':
+          return (
+            <GeneralErrorScreen 
+              title="Access Denied" 
+              body="You don't have permission to access this page" 
+              onRetry={() => {
+                dispatch({
+                  type: 'FETCH_CURRENT_ROLE',
+                  payload: {
+                    protection: 'UNDEFINED',
+                    error: {
+                      code: '',
+                      message: '',
+                    },
+                  },
+                });
+              }} 
+            />
+          );
+        case 'UNDEFINED':
+          return (
+            <GeneralErrorScreen 
+              title="Access Denied" 
+              body="You don't have permission to access this page" 
+              onRetry={() => {
+                dispatch({
+                  type: 'FETCH_CURRENT_ROLE',
+                  payload: {
+                    protection: 'UNDEFINED',
+                    error: {
+                      code: '',
+                      message: '',
+                    },
+                  },
+                });
+              }} 
+            />
+          );
+        default: 
+        return null;
       }
-      {state.type === 'FETCHING_CURRENT_ROLE_ERROR' && <h1>ERROR</h1>}
-    </>
-  );
+    case 'FETCHING_CURRENT_ROLE_ERROR':
+      return (
+        <GeneralErrorScreen 
+          title="Something wen't wrong" 
+          body='Please try again' 
+          onRetry={() => {
+            dispatch({
+              type: 'FETCH_CURRENT_ROLE',
+              payload: {
+                protection: 'UNDEFINED',
+                error: {
+                  code: '',
+                  message: '',
+                },
+              },
+            });
+          }} 
+        />
+      );
+    default:
+      return null;
+  }
 }
