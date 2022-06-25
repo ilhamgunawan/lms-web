@@ -1,11 +1,11 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import NextHead from 'next/head';
-import { getConfig, Config } from '../../common/utils';
-import Layout from '../../src/layout/Layout';
-import RouteProtection from '../../src/route-protection/RouteProtection';
-import AuthProtection from '../../src/auth-protection/AuthProtection';
-import UserManagementScreen from '../../src/user-management/UserManagementScreen';
+import { getConfig, Config } from '../../../common/utils';
+import Layout from '../../../src/layout/Layout';
+import RouteProtection from '../../../src/route-protection/RouteProtection';
+import AuthProtection from '../../../src/auth-protection/AuthProtection';
+import CreateUserScreen from '../../../src/user-management/CreateUserScreen';
 
 interface PageProps {
   config: Config;
@@ -20,19 +20,17 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
   };
 };
 
-const Page = (props: PageProps) => {
+export default function Page(props: PageProps) {
   return (
     <AuthProtection>
       <NextHead>
-        <title>{`Users - ${props.config.siteName}`}</title>
+        <title>{`Create User - ${props.config.siteName}`}</title>
       </NextHead>
       <Layout config={props.config}>
         <RouteProtection allowedRoles={['admin', 'teacher']}>
-          <UserManagementScreen />
+          <CreateUserScreen />
         </RouteProtection>
       </Layout>
     </AuthProtection>
   );
 };
-
-export default Page;
