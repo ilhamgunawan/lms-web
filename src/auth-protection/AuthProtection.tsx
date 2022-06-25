@@ -5,6 +5,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { ErrorResponse } from '../../api/global';
 import { fetchValidateSession, ValidateSessionResponse } from '../../api/auth';
 import LoadingScreen from '../loading/LoadingScreen';
+import GeneralErrorScreen from '../error/GeneralErrorScreen';
 
 interface Props {
   children: ReactNode;
@@ -43,16 +44,27 @@ export default function AuthProtection(props: Props) {
     validateSession.mutate();
   }, []);
 
-  return (
-    <>
-      {state.status === 'IDLE' && <LoadingScreen />}
-      {state.status === 'FETCHING' && <LoadingScreen />}
-      {state.status === 'SUCCESS' &&
-        <>
-          {state.session === 'VALID' && props.children}
-        </>
+  switch(state.status) {
+    case 'IDLE':
+      return <LoadingScreen />;
+    case 'FETCHING':
+      return <LoadingScreen />;
+    case 'SUCCESS':
+      switch(state.session) {
+        case 'VALID':
+          return <>{props.children}</>;
+        default:
+          return null;
       }
-      {state.status === 'ERROR' && null}
-    </>
-  );
+    case 'ERROR':
+      return (
+        <GeneralErrorScreen 
+          title="Something wen't wrong" 
+          body='Please try again' 
+          onRetry={() => validateSession.mutate()} 
+        />
+      );
+    default:
+      return null;
+  }
 }
