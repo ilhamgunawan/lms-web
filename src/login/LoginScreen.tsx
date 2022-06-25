@@ -63,6 +63,7 @@ export default function LoginLayout() {
 
   const login = useMutation(fetchLogin, {
     onError: (error: AxiosError<ErrorResponse>, _variables, _context) => {
+      window.localStorage.removeItem('user');
       dispatch({
         type: 'FETCH_LOGIN_ERROR',
         payload: {
@@ -70,7 +71,8 @@ export default function LoginLayout() {
         },
       });
     },
-    onSuccess: (_res: AxiosResponse<LoginResponse>, _variables, _context) => {
+    onSuccess: (res: AxiosResponse<LoginResponse>, _variables, _context) => {
+      window.localStorage.setItem('user', JSON.stringify(res.data.data));
       dispatch({
         type: 'FETCH_LOGIN_SUCCESS',
         payload: {
@@ -82,6 +84,7 @@ export default function LoginLayout() {
 
   const validateSession = useMutation(fetchValidateSession, {
     onError: (_error: AxiosError<ErrorResponse>, _variables, _context) => {
+      window.localStorage.removeItem('user');
       dispatch({
         type: 'FORM_INQUIRY',
         payload: {
