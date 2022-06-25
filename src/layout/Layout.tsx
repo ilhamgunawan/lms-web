@@ -42,7 +42,7 @@ import { IconType } from 'react-icons';
 import { AxiosError, AxiosResponse } from 'axios';
 import { ErrorResponse } from '../../api/global';
 import { Menu as MenuResponseItem } from '../../api/menus';
-import { fetchLogout, LogoutResponse } from '../../api/auth';
+import { fetchLogout, LogoutResponse, LoginData } from '../../api/auth';
 
 export default function Sidebar({
   config,
@@ -191,6 +191,11 @@ interface MobileProps extends FlexProps {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const router = useRouter();
   const toast = useToast();
+  const userJSON = window.localStorage.getItem('user');
+  const user: LoginData | null = userJSON 
+    ? JSON.parse(userJSON)
+    : null
+  ;
 
   const logout = useMutation(fetchLogout, {
     onError: (error: AxiosError<ErrorResponse>, _variables, _context) => {
@@ -262,9 +267,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2">
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{user?.name}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {user?.role.name}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
