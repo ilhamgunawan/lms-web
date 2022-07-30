@@ -2,71 +2,74 @@ import React from 'react';
 import { useRouter, NextRouter } from 'next/router';
 import {
   Button,
-  Flex,
   FormControl,
   FormLabel,
-  Heading,
   Input,
   Stack,
   Select,
   useColorModeValue,
-  HStack,
-  Avatar,
-  AvatarBadge,
-  IconButton,
-  Center,
   Text,
-  Spacer,
-  useToast,
-  UseToastOptions,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
-import { SmallCloseIcon } from '@chakra-ui/icons';
 
-import { createMachine, assign, send } from 'xstate';
+import { AxiosPromise, AxiosResponse, AxiosError } from 'axios';
+import { createMachine, assign } from 'xstate';
 import { useMachine } from '@xstate/react';
+import {
+  createUser,
+  CreateUserRequest,
+  CreateUserResponse,
+} from '../../api/users';
+import { ErrResponse } from '../../api/global';
 
 type CreateUserContext = {
   request: {
-    name: string,
-    email: string,
-    role: string,
-  },
+    name: string;
+    email: string;
+    role: string;
+  };
   response: {
-    data: any,
-    message: string,
-    status: string,
-  },
-  validation: Array<string>,
-  router: NextRouter,
-}
+    data: any;
+    message: string;
+    status: string;
+  };
+  validation: Array<string>;
+  router: NextRouter;
+  createUser: (req: CreateUserRequest) => AxiosPromise<any>;
+};
 
-function makeMachine(router: NextRouter) {
-  return (
-    createMachine({
+function makeMachine(
+  router: NextRouter,
+  createUser: (req: CreateUserRequest) => AxiosPromise<any>
+) {
+  return createMachine(
+    {
       id: 'createUserForm',
       initial: 'idle',
       schema: {
-        context: {} as CreateUserContext
+        context: {} as CreateUserContext,
       },
       context: {
         request: {
-          name: "",
-          email: "",
-          role: "",
+          name: '',
+          email: '',
+          role: '',
         },
         response: {
-          data: "",
-          message: "",
-          status: "",
+          data: '',
+          message: '',
+          status: '',
         },
         validation: [],
         router,
+        createUser,
       },
       states: {
         idle: {
           on: {
-            INPUT: { target: "idle", actions: "inputForm" },
-            VALIDATE: { target: "validating", actions: "updateValidation" },
+            INPUT: { target: 'idle', actions: 'inputForm' },
+            VALIDATE: { target: 'validating', actions: 'updateValidation' },
           },
         },
         validating: {
@@ -74,98 +77,120 @@ function makeMachine(router: NextRouter) {
             src: 'calculateValidation',
           },
           on: {
-            VALID: { target: "submitting" },
-            INVALID: { target: "idle" },
+            VALID: { target: 'submitting' },
+            INVALID: { target: 'idle' },
           },
         },
         submitting: {
           invoke: {
-            src: "postData",
+            src: 'postData',
           },
           on: {
-            OK: { target: "succeed" },
-            ERROR: { target: "idle", actions: "updateError" },
+            OK: { target: 'succeed' },
+            ERROR: { target: 'idle', actions: 'updateError' },
           },
         },
         succeed: {
           invoke: {
-            src: "redirectToSource",
+            src: 'redirectToSource',
           },
-          type: "final"
+          type: 'final',
         },
-      }
+      },
     },
     {
       actions: {
         inputForm: assign({
           request: (context, event) => {
-            return ({
+            return {
               ...context.request,
               ...event,
-            });
+            };
+          },
+          response: (context, event) => {
+            return {
+              data: '',
+              message: '',
+              status: '',
+            };
           },
         }),
         updateValidation: assign({
           validation: (context, event) => {
             let validation: Array<string> = [];
             const { name, email, role } = context.request;
-            if (name === "") {
-              validation = [...validation, "EMPTYNAME"];
+            if (name === '') {
+              validation = [...validation, 'EMPTYNAME'];
             }
-            if (email === "") {
-              validation = [...validation, "EMPTYEMAIL"];
+            if (email === '') {
+              validation = [...validation, 'EMPTYEMAIL'];
             }
-            if (role === "") {
-              validation = [...validation, "EMPTYROLE"];
+            if (role === '') {
+              validation = [...validation, 'EMPTYROLE'];
             }
             return [...validation];
           },
         }),
         updateError: assign({
           response: (context, event) => {
-            return ({
-              data: "",
-              message: "Error",
-              status: "Error",
-            });
+            return {
+              data: '',
+              message: 'Error',
+              status: 'Error',
+            };
           },
         }),
       },
       services: {
-        calculateValidation: (context, event, {src}) => 
+        calculateValidation:
+          (context, event, { src }) =>
           (send) => {
-            if (context.validation.length === 0) send("VALID");
-            send("INVALID");
+            if (context.validation.length === 0) send('VALID');
+            send('INVALID');
           },
-        postData: (context, event, {src}) => 
+        postData:
+          (context, event, { src }) =>
           async (send) => {
-            setTimeout(() => send("OK"), 2000)
+            context
+              .createUser({ ...context.request })
+              .then((_res: AxiosResponse<CreateUserResponse>) => {
+                send('OK');
+              })
+              .catch((_err: AxiosError<ErrResponse>) => {
+                send('ERROR');
+              });
           },
-        redirectToSource: (context, event, {src}) =>
+        redirectToSource:
+          (context, event, { src }) =>
           (send) => {
             context.router.replace('/user');
           },
       },
-    })
-  )
-};
+    }
+  );
+}
 
 export default function UserForm(): JSX.Element {
   const router = useRouter();
-  const toast = useToast()
-  const [state, send] = useMachine(makeMachine(router));
+  const machine = React.useCallback(() => {
+    return makeMachine(router, createUser);
+  }, []);
+  const [state, send] = useMachine(machine);
   const { name, email, role } = state.context.request;
-  const isFormDisabled = state.value === 'validating' || state.value === 'submitting' || state.value === 'succeed';
-  const isNameInvalid = Boolean(state.context.validation.find(err => err === 'EMPTYNAME'));
-  const isEmailInvalid = Boolean(state.context.validation.find(err => err === 'EMPTYEMAIL'));
-  const isRoleInvalid = Boolean(state.context.validation.find(err => err === 'EMPTYROLE'));
-  const isShowErrorToast = state.context.response.status === 'Error';
-
-  React.useEffect(() => {
-    if (state.value === 'succeed') {
-      router.replace('/user');
-    }
-  }, [state.value]);
+  const isFormDisabled =
+    state.value === 'validating' ||
+    state.value === 'submitting' ||
+    state.value === 'succeed';
+  const isNameInvalid = Boolean(
+    state.context.validation.find((err) => err === 'EMPTYNAME')
+  );
+  const isEmailInvalid = Boolean(
+    state.context.validation.find((err) => err === 'EMPTYEMAIL')
+  );
+  const isRoleInvalid = Boolean(
+    state.context.validation.find((err) => err === 'EMPTYROLE')
+  );
+  const isSubmitError = state.context.response.status === 'Error';
 
   return (
     <Stack
@@ -178,69 +203,78 @@ export default function UserForm(): JSX.Element {
       marginTop='4'
       p={6}
     >
-      <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
-        Create User
-      </Heading>
-      <FormControl id="form-user-name" isRequired>
-        <FormLabel>Full Name</FormLabel>
+      {isSubmitError && (
+        <Alert status='warning'>
+          <AlertIcon />
+          Something went wrong, please try again.
+        </Alert>
+      )}
+      <FormControl id='form-user-name' isRequired>
+        <FormLabel>Full name</FormLabel>
         <Input
-          placeholder="Full name"
+          placeholder='Full name'
           _placeholder={{ color: 'gray.500' }}
-          type="text"
+          type='text'
           isDisabled={isFormDisabled}
           value={name}
           onChange={(event) => {
-            send("INPUT", { name: event.target.value })
+            send('INPUT', { name: event.target.value });
           }}
         />
-        {isNameInvalid && 
-          <Text color='red' fontSize='small'>Name cannot be empty</Text>
-        }
+        {isNameInvalid && (
+          <Text color='red' fontSize='small'>
+            Name cannot be empty
+          </Text>
+        )}
       </FormControl>
-      <FormControl id="form-user-email" isRequired>
+      <FormControl id='form-user-email' isRequired>
         <FormLabel>Email address</FormLabel>
         <Input
-          placeholder="your-email@example.com"
+          placeholder='your-email@example.com'
           _placeholder={{ color: 'gray.500' }}
-          type="email"
+          type='email'
           isDisabled={isFormDisabled}
           value={email}
           onChange={(event) => {
-            send("INPUT", { email: event.target.value })
+            send('INPUT', { email: event.target.value });
           }}
         />
-        {isEmailInvalid && 
-          <Text color='red' fontSize='small'>Email cannot be empty</Text>
-        }
+        {isEmailInvalid && (
+          <Text color='red' fontSize='small'>
+            Email cannot be empty
+          </Text>
+        )}
       </FormControl>
-      <FormControl id="form-user-role" isRequired>
+      <FormControl id='form-user-role' isRequired>
         <FormLabel>Default role</FormLabel>
-        <Select 
+        <Select
           placeholder='Select role'
           isDisabled={isFormDisabled}
           value={role}
           onChange={(event) => {
-            send("INPUT", { role: event.target.value })
+            send('INPUT', { role: event.target.value });
           }}
         >
           <option value='admin'>Admin</option>
           <option value='teacher'>Teacher</option>
           <option value='student'>Student</option>
         </Select>
-        {isRoleInvalid && 
-          <Text color='red' fontSize='small'>Role cannot be empty</Text>
-        }
+        {isRoleInvalid && (
+          <Text color='red' fontSize='small'>
+            Role cannot be empty
+          </Text>
+        )}
       </FormControl>
       <Stack spacing={6} direction={['column', 'row']}>
         <Button
           bg={'blue.400'}
           color={'white'}
-          w="full"
+          w='full'
           _hover={{
             bg: 'blue.500',
           }}
           isLoading={isFormDisabled}
-          onClick={() => send("VALIDATE")}
+          onClick={() => send('VALIDATE')}
         >
           Submit
         </Button>
