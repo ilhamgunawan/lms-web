@@ -2,7 +2,7 @@ import React from 'react';
 import { GetServerSideProps } from 'next';
 import NextHead from 'next/head';
 import { getConfig, Config } from '../../common/utils';
-import Layout from '../../src/layout/Layout';
+import Layout from '../../src/layout/LayoutV2';
 import RouteProtection from '../../src/route-protection/RouteProtection';
 import AuthProtection from '../../src/auth-protection/AuthProtection';
 import UserManagementScreen from '../../src/user-management/UserManagementScreen';
@@ -26,7 +26,7 @@ const Page = (props: PageProps) => {
       <NextHead>
         <title>{`Users - ${props.config.siteName}`}</title>
       </NextHead>
-      <Layout config={props.config}>
+      <Layout breadcumbList={[{ name: 'Users', href: null}]}>
         <RouteProtection allowedRoles={['admin', 'teacher']}>
           <UserManagementScreen />
         </RouteProtection>

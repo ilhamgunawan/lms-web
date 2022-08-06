@@ -198,8 +198,8 @@ export default function UserForm(): JSX.Element {
       w={'full'}
       maxW={'md'}
       bg={useColorModeValue('white', 'gray.700')}
-      rounded={'xl'}
-      boxShadow={'lg'}
+      rounded={'md'}
+      boxShadow={'sm'}
       marginTop='4'
       p={6}
     >

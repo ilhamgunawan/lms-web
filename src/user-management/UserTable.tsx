@@ -30,7 +30,7 @@ export default function UserTable(props: Props) {
           Create User
         </Button>
       </Link>
-      <Box boxShadow='md' padding='2' bg='white' borderRadius='lg'>
+      <Box boxShadow='sm' padding='2' bg='white' borderRadius='md'>
         <TableContainer>
           <Table variant='simple' colorScheme='gray'>
             <Thead>

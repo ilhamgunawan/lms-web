@@ -13,15 +13,19 @@ interface Item {
   href: string | null;
 }
 
+export type BreadcrumbList = Array<Item>;
+
 interface Props {
-  items?: Array<Item>;
+  items?: BreadcrumbList;
 }
 
 export default function BreadCrumbComponent(props: Props) {
   return (
     <Breadcrumb spacing='8px' separator={<ChevronRightIcon color='gray.500' />}>
       <BreadcrumbItem>
-        <BreadcrumbLink href='/'>Dashboard</BreadcrumbLink>
+        <Link href='/' passHref>
+          <BreadcrumbLink>Home</BreadcrumbLink>
+        </Link>
       </BreadcrumbItem>
       {props.items?.map(item => {
         return (

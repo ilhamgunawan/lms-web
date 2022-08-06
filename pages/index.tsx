@@ -2,9 +2,10 @@ import type { GetServerSideProps } from 'next';
 import type { Config } from '../common/utils';
 import NextHead from 'next/head';
 import { getConfig } from '../common/utils';
-import Layout from '../src/layout/Layout';
+import Layout from '../src/layout/LayoutV2';
 import RouteProtection from '../src/route-protection/RouteProtection';
 import AuthProtection from '../src/auth-protection/AuthProtection';
+import Dashboard from '../src/dashboard/Dashboard';
 
 interface PageProps {
   config: Config;
@@ -19,19 +20,17 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
   };
 };
 
-const Dashboard = (props: PageProps) => {
+export default function Home(props: PageProps) {
   return (
     <AuthProtection>
       <NextHead>
-        <title>{`Dashboard - ${props.config.siteName}`}</title>
+        <title>{`Home - ${props.config.siteName}`}</title>
       </NextHead>
-      <Layout config={props.config}>
+      <Layout>
         <RouteProtection allowedRoles={['admin', 'teacher', 'student']}>
-          <h1>{'Dashboard'}</h1>
+          <Dashboard />
         </RouteProtection>
       </Layout>
     </AuthProtection>
   );
 };
-
-export default Dashboard;

@@ -2,7 +2,7 @@ import type { GetServerSideProps } from 'next';
 import type { Config } from '../../common/utils';
 import NextHead from 'next/head';
 import { getConfig } from '../../common/utils';
-import Layout from '../../src/layout/Layout';
+import Layout from '../../src/layout/LayoutV2';
 import RouteProtection from '../../src/route-protection/RouteProtection';
 
 interface PageProps {
@@ -24,7 +24,12 @@ const Users = (props: PageProps) => {
     <NextHead>
       <title>{`Courses - ${props.config.siteName}`}</title>
     </NextHead>
-    <Layout config={props.config}>
+    <Layout breadcumbList={[
+          {
+            name: 'Courses',
+            href: null,
+          }
+        ]}>
       <RouteProtection allowedRoles={['admin']}>
         <h1>{'Courses'}</h1>
       </RouteProtection>
