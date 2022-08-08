@@ -59,3 +59,11 @@ export function useCreateUser(onError?: OnError, onSuccess?: OnSuccess) {
     onSuccess: onSuccess,
   });
 }
+
+export function deleteUser(userId: string) {
+  return axios({
+    url: `http://localhost:7002/api/v1/users/${userId}/delete`,
+    method: 'delete',
+    withCredentials: true,
+  });
+}

@@ -201,6 +201,7 @@ export default function UserForm(): JSX.Element {
       rounded={'md'}
       boxShadow={'sm'}
       marginTop='4'
+      marginX='auto'
       p={6}
     >
       {isSubmitError && (

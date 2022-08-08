@@ -13,7 +13,7 @@ export default function UserManagementScreen() {
     case 'loading':
       return <UserTablePlaceHolder />;
     case 'success':
-      return <UserTable users={users ? users : []} />;
+      return <UserTable users={users ? users : []} refetchUsers={refetch} />;
     case 'error':
       return <GeneralErrorScreen title="Something wen't wrong" body='Please try again' onRetry={refetch} />
     default:
