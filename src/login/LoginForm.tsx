@@ -1,104 +1,99 @@
-import React, { FormEvent, Dispatch, ChangeEvent } from 'react';
-import { UseMutationResult } from 'react-query';
-import { AxiosResponse } from 'axios';
+import { useRouter } from 'next/router';
+import { useMutation } from 'react-query';
+import { AxiosError } from 'axios';
 import {
-  Box,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
+  Alert,
   Button,
-  useColorModeValue,
-} from '@chakra-ui/react';
-import { State, Action } from './login-reducer';
-import { LoginRequest } from '../../api/auth';
+  Flex,
+  Group,
+  LoadingOverlay,
+  TextInput,
+  Paper,
+  PasswordInput,
+  Stack,
+} from '@mantine/core';
+import {
+  isNotEmpty,
+  useForm, 
+} from '@mantine/form';
+import {
+  IconAlertCircle,
+  IconAt,
+  IconLock,
+} from '@tabler/icons';
+import { postAuthLogin } from '../../api/auth';
+import appRoutes from '../../routes';
 
-interface LoginFormProps {
-  state: State;
-  dispatch: Dispatch<Action>;
-  isDisabled: boolean;
-  mutate: UseMutationResult<AxiosResponse<any, any>, unknown, LoginRequest, unknown>;
-}
+type Props = {
+  disabled: boolean
+};
 
-export default function LoginForm(props: LoginFormProps) {
-  function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    props.dispatch({
-      type: 'FETCH_LOGIN',
-      payload: {
-        error: '',
-      },
-    });
-  }
+export default function LoginForm({ disabled }: Props) {
+  const router = useRouter();
 
-  function handleChangeEmail(e: ChangeEvent<HTMLInputElement>) {
-    props.dispatch({
-      type: 'FORM_INQUIRY',
-      payload: {
-        login: {
-          email: e.target.value,
-          password: props.state.login?.password
-            ? props.state.login?.password
-            : '',
-        },
-      },
-    });
-  }
+  const form = useForm({
+    initialValues: {
+      user_name: '',
+      password: '',
+    },
+    validate: {
+      user_name: isNotEmpty('Enter your username'),
+      password: isNotEmpty('Enter your password'),
+    },
+  });
 
-  function handleChangePassword(e: ChangeEvent<HTMLInputElement>) {
-    props.dispatch({
-      type: 'FORM_INQUIRY',
-      payload: {
-        login: {
-          email: props.state.login?.email ? props.state.login?.email : '',
-          password: e.target.value,
-        },
-      },
-    });
-  }
+  const { isLoading: isLoadingPostLogin, mutate, error } = useMutation(postAuthLogin, {
+    onError: (error , _variables, _context) => {
+      // console.log('error', error);
+    },
+    onSuccess: (res , _variables, _context) => {
+      // console.log('success', res);
+      
+      if (res.data) {
+        window.localStorage.setItem('user', JSON.stringify(res.data.data));
+        window.localStorage.setItem('token', res.data.data.token);
+        router.replace(appRoutes.dashboard.path);
+      }
+    },
+  });
+
+  const errorMessage = error instanceof AxiosError
+    ? (error.response?.data.message as string | undefined)
+    : undefined;
+
+  const isLoading = isLoadingPostLogin || disabled;
 
   return (
-    <Box
-      rounded={'lg'}
-      bg={useColorModeValue('white', 'gray.700')}
-      boxShadow={'lg'}
-      p={8}
-    >
-      <Stack spacing={4} as='form' onSubmit={onSubmit}>
-        <FormControl id='email'>
-          <FormLabel>Email address</FormLabel>
-          <Input
-            type='email'
-            isDisabled={props.isDisabled}
-            isRequired={true}
-            value={props.state.login?.email}
-            onChange={handleChangeEmail}
-          />
-        </FormControl>
-        <FormControl id='password'>
-          <FormLabel>Password</FormLabel>
-          <Input
-            type='password'
-            isDisabled={props.isDisabled}
-            isRequired={true}
-            value={props.state.login?.password}
-            onChange={handleChangePassword}
-          />
-        </FormControl>
-        <Stack spacing={10}>
-          <Button
-            bg={'blue.400'}
-            color={'white'}
-            _hover={{
-              bg: 'blue.500',
-            }}
-            type='submit'
-            isLoading={props.isDisabled}
-          >
-            Sign in
-          </Button>
-        </Stack>
-      </Stack>
-    </Box>
+    <Paper shadow="xs" p="md" w="350px" maw="100%">
+      <form onSubmit={form.onSubmit((values) => mutate(values))}>
+        <Flex
+          direction="column"
+          gap="xs"
+        >
+          {errorMessage 
+            ? <Alert icon={<IconAlertCircle size="16px" />} title="Log in failed!" color="red">
+                {errorMessage}
+              </Alert>
+            : null
+          }
+          <Stack style={{ position: "relative" }}>
+            <LoadingOverlay visible={isLoading} overlayBlur={1} />
+            <TextInput
+              placeholder="Your username"
+              icon={<IconAt size="16px" />}
+              {...form.getInputProps('user_name')}
+            />
+            <PasswordInput
+              placeholder="Your password"
+              icon={<IconLock size="16px" />}
+              {...form.getInputProps('password')}
+            />
+          </Stack>
+          <Group position="right">
+            <Button type="submit" disabled={isLoading}>Log in</Button>
+          </Group>
+        </Flex>
+      </form>
+    </Paper>
   );
 }
