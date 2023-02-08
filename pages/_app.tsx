@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
-import { ChakraProvider } from '@chakra-ui/react';
-import NextNProgress from 'nextjs-progressbar';
+import { MantineProvider } from '@mantine/core';
+// import { ChakraProvider } from '@chakra-ui/react';
+// import NextNProgress from 'nextjs-progressbar';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient()
@@ -8,7 +9,17 @@ const queryClient = new QueryClient()
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ChakraProvider>
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        theme={{
+          /** Put your mantine theme override here */
+          colorScheme: 'light',
+        }}
+      >
+        <Component {...pageProps} />
+      </MantineProvider>
+      {/* <ChakraProvider>
         <NextNProgress
           color='#2B6CB0'
           startPosition={0.3}
@@ -17,7 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           showOnShallow={true}
         />
         <Component {...pageProps} />
-      </ChakraProvider>
+      </ChakraProvider> */}
     </QueryClientProvider>
   );
 }
