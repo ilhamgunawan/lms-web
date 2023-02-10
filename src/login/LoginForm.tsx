@@ -64,7 +64,7 @@ export default function LoginForm({ disabled }: Props) {
   const isLoading = isLoadingPostLogin || disabled;
 
   return (
-    <Paper shadow="xs" p="md" w="350px" maw="100%">
+    <Paper shadow="md" p="md" w="350px" maw="100%">
       <form onSubmit={form.onSubmit((values) => mutate(values))}>
         <Flex
           direction="column"
