@@ -1,13 +1,6 @@
-import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { Box, Heading, Text, Button } from '@chakra-ui/react';
-
-export const getStaticProps: GetStaticProps = async (_context) => {
-  return {
-    props: {}
-  };
-}
+// import { Box, Heading, Text, Button } from '@chakra-ui/react';
 
 export default function NotFound() {
   const router = useRouter();
@@ -17,7 +10,8 @@ export default function NotFound() {
       <Head>
         <title>Page Not Found - LMS</title>
       </Head>
-      <Box textAlign="center" py={10} px={6}>
+      <h1>Not found</h1>
+      {/* <Box textAlign="center" py={10} px={6}>
         <Heading
           display="inline-block"
           as="h2"
@@ -41,7 +35,7 @@ export default function NotFound() {
         >
           Go to Home
         </Button>
-      </Box>
+      </Box> */}
     </>
   );
 }
