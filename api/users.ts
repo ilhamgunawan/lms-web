@@ -67,3 +67,37 @@ export function deleteUser(userId: string) {
     withCredentials: true,
   });
 }
+
+const endpoint = process.env.NEXT_PUBLIC_ENDPOINT;
+
+export interface UserAccount {
+  id: string
+  first_name: string
+  last_name: string
+  gender: string
+  date_of_birth: string
+}
+
+export type GetAllUsersData = {
+  data: {
+    users: UserAccount[]
+    total_current: number
+    total_all: number
+    total_page: number
+    limit: number
+    offset: number
+  }
+}
+
+export async function getAllUsers(page: number): Promise<AxiosResponse<GetAllUsersData>> {
+  const limit = 10;
+  const offset = (page - 1) * limit;
+
+  return axios({
+    url: `${endpoint}/api/v1/users?limit=${limit}&offset=${offset}`,
+    method: 'get',
+    headers: {
+      'Authorization': window.localStorage.getItem('token') ?? '',
+    },
+  });
+}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "react-query";
 import { useRouter } from "next/router";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { postAuthValidateToken } from "../api/auth";
 import appRoutes from "../routes";
 
@@ -19,6 +19,13 @@ export default function useValidateToken(params: UseValidateTokenParams) {
       // console.log('error', error);
 
       setIsLoading(false);
+
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          window.localStorage.removeItem('token');
+          window.localStorage.removeItem('user');
+        }
+      }
 
       if (params.onError) params.onError(error);
     },
