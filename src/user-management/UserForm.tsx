@@ -16,12 +16,6 @@ import {
 import { AxiosPromise, AxiosResponse, AxiosError } from 'axios';
 import { createMachine, assign } from 'xstate';
 import { useMachine } from '@xstate/react';
-import {
-  createUser,
-  CreateUserRequest,
-  CreateUserResponse,
-} from '../../api/users';
-import { ErrResponse } from '../../api/global';
 
 type CreateUserContext = {
   request: {
@@ -36,12 +30,12 @@ type CreateUserContext = {
   };
   validation: Array<string>;
   router: NextRouter;
-  createUser: (req: CreateUserRequest) => AxiosPromise<any>;
+  createUser: (req: any) => AxiosPromise<any>;
 };
 
 function makeMachine(
   router: NextRouter,
-  createUser: (req: CreateUserRequest) => AxiosPromise<any>
+  createUser: (req: any) => AxiosPromise<any>
 ) {
   return createMachine(
     {
@@ -153,10 +147,10 @@ function makeMachine(
           async (send) => {
             context
               .createUser({ ...context.request })
-              .then((_res: AxiosResponse<CreateUserResponse>) => {
+              .then((_res: AxiosResponse<any>) => {
                 send('OK');
               })
-              .catch((_err: AxiosError<ErrResponse>) => {
+              .catch((_err: AxiosError<any>) => {
                 send('ERROR');
               });
           },
@@ -171,115 +165,116 @@ function makeMachine(
 }
 
 export default function UserForm(): JSX.Element {
-  const router = useRouter();
-  const machine = React.useCallback(() => {
-    return makeMachine(router, createUser);
-  }, []);
-  const [state, send] = useMachine(machine);
-  const { name, email, role } = state.context.request;
-  const isFormDisabled =
-    state.value === 'validating' ||
-    state.value === 'submitting' ||
-    state.value === 'succeed';
-  const isNameInvalid = Boolean(
-    state.context.validation.find((err) => err === 'EMPTYNAME')
-  );
-  const isEmailInvalid = Boolean(
-    state.context.validation.find((err) => err === 'EMPTYEMAIL')
-  );
-  const isRoleInvalid = Boolean(
-    state.context.validation.find((err) => err === 'EMPTYROLE')
-  );
-  const isSubmitError = state.context.response.status === 'Error';
+  return <></>
+  // const router = useRouter();
+  // const machine = React.useCallback(() => {
+  //   return makeMachine(router, createUser);
+  // }, []);
+  // const [state, send] = useMachine(machine);
+  // const { name, email, role } = state.context.request;
+  // const isFormDisabled =
+  //   state.value === 'validating' ||
+  //   state.value === 'submitting' ||
+  //   state.value === 'succeed';
+  // const isNameInvalid = Boolean(
+  //   state.context.validation.find((err) => err === 'EMPTYNAME')
+  // );
+  // const isEmailInvalid = Boolean(
+  //   state.context.validation.find((err) => err === 'EMPTYEMAIL')
+  // );
+  // const isRoleInvalid = Boolean(
+  //   state.context.validation.find((err) => err === 'EMPTYROLE')
+  // );
+  // const isSubmitError = state.context.response.status === 'Error';
 
-  return (
-    <Stack
-      spacing={4}
-      w={'full'}
-      maxW={'md'}
-      bg={useColorModeValue('white', 'gray.700')}
-      rounded={'md'}
-      boxShadow={'sm'}
-      marginTop='4'
-      marginX='auto'
-      p={6}
-    >
-      {isSubmitError && (
-        <Alert status='warning'>
-          <AlertIcon />
-          Something went wrong, please try again.
-        </Alert>
-      )}
-      <FormControl id='form-user-name' isRequired>
-        <FormLabel>Full name</FormLabel>
-        <Input
-          placeholder='Full name'
-          _placeholder={{ color: 'gray.500' }}
-          type='text'
-          isDisabled={isFormDisabled}
-          value={name}
-          onChange={(event) => {
-            send('INPUT', { name: event.target.value });
-          }}
-        />
-        {isNameInvalid && (
-          <Text color='red' fontSize='small'>
-            Name cannot be empty
-          </Text>
-        )}
-      </FormControl>
-      <FormControl id='form-user-email' isRequired>
-        <FormLabel>Email address</FormLabel>
-        <Input
-          placeholder='your-email@example.com'
-          _placeholder={{ color: 'gray.500' }}
-          type='email'
-          isDisabled={isFormDisabled}
-          value={email}
-          onChange={(event) => {
-            send('INPUT', { email: event.target.value });
-          }}
-        />
-        {isEmailInvalid && (
-          <Text color='red' fontSize='small'>
-            Email cannot be empty
-          </Text>
-        )}
-      </FormControl>
-      <FormControl id='form-user-role' isRequired>
-        <FormLabel>Default role</FormLabel>
-        <Select
-          placeholder='Select role'
-          isDisabled={isFormDisabled}
-          value={role}
-          onChange={(event) => {
-            send('INPUT', { role: event.target.value });
-          }}
-        >
-          <option value='admin'>Admin</option>
-          <option value='teacher'>Teacher</option>
-          <option value='student'>Student</option>
-        </Select>
-        {isRoleInvalid && (
-          <Text color='red' fontSize='small'>
-            Role cannot be empty
-          </Text>
-        )}
-      </FormControl>
-      <Stack spacing={6} direction={['column', 'row']}>
-        <Button
-          bg={'blue.400'}
-          color={'white'}
-          w='full'
-          _hover={{
-            bg: 'blue.500',
-          }}
-          isLoading={isFormDisabled}
-          onClick={() => send('VALIDATE')}
-        >
-          Submit
-        </Button>
-      </Stack>
-    </Stack>
-  );
+  // return (
+  //   <Stack
+  //     spacing={4}
+  //     w={'full'}
+  //     maxW={'md'}
+  //     bg={useColorModeValue('white', 'gray.700')}
+  //     rounded={'md'}
+  //     boxShadow={'sm'}
+  //     marginTop='4'
+  //     marginX='auto'
+  //     p={6}
+  //   >
+  //     {isSubmitError && (
+  //       <Alert status='warning'>
+  //         <AlertIcon />
+  //         Something went wrong, please try again.
+  //       </Alert>
+  //     )}
+  //     <FormControl id='form-user-name' isRequired>
+  //       <FormLabel>Full name</FormLabel>
+  //       <Input
+  //         placeholder='Full name'
+  //         _placeholder={{ color: 'gray.500' }}
+  //         type='text'
+  //         isDisabled={isFormDisabled}
+  //         value={name}
+  //         onChange={(event) => {
+  //           send('INPUT', { name: event.target.value });
+  //         }}
+  //       />
+  //       {isNameInvalid && (
+  //         <Text color='red' fontSize='small'>
+  //           Name cannot be empty
+  //         </Text>
+  //       )}
+  //     </FormControl>
+  //     <FormControl id='form-user-email' isRequired>
+  //       <FormLabel>Email address</FormLabel>
+  //       <Input
+  //         placeholder='your-email@example.com'
+  //         _placeholder={{ color: 'gray.500' }}
+  //         type='email'
+  //         isDisabled={isFormDisabled}
+  //         value={email}
+  //         onChange={(event) => {
+  //           send('INPUT', { email: event.target.value });
+  //         }}
+  //       />
+  //       {isEmailInvalid && (
+  //         <Text color='red' fontSize='small'>
+  //           Email cannot be empty
+  //         </Text>
+  //       )}
+  //     </FormControl>
+  //     <FormControl id='form-user-role' isRequired>
+  //       <FormLabel>Default role</FormLabel>
+  //       <Select
+  //         placeholder='Select role'
+  //         isDisabled={isFormDisabled}
+  //         value={role}
+  //         onChange={(event) => {
+  //           send('INPUT', { role: event.target.value });
+  //         }}
+  //       >
+  //         <option value='admin'>Admin</option>
+  //         <option value='teacher'>Teacher</option>
+  //         <option value='student'>Student</option>
+  //       </Select>
+  //       {isRoleInvalid && (
+  //         <Text color='red' fontSize='small'>
+  //           Role cannot be empty
+  //         </Text>
+  //       )}
+  //     </FormControl>
+  //     <Stack spacing={6} direction={['column', 'row']}>
+  //       <Button
+  //         bg={'blue.400'}
+  //         color={'white'}
+  //         w='full'
+  //         _hover={{
+  //           bg: 'blue.500',
+  //         }}
+  //         isLoading={isFormDisabled}
+  //         onClick={() => send('VALIDATE')}
+  //       >
+  //         Submit
+  //       </Button>
+  //     </Stack>
+  //   </Stack>
+  // );
 }

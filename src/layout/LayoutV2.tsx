@@ -10,7 +10,6 @@ import {
 } from '@chakra-ui/react';
 import Breadcrumb, { BreadcrumbList } from "../breadcrumb/Breadcrumb";
 import MenuDropdown from './MenuDropdown';
-import { LoginData } from '../../api/auth';
 
 type Props = {
   breadcumbList?: BreadcrumbList,
@@ -19,7 +18,7 @@ type Props = {
 
 export default function Layout({breadcumbList, children}: Props) {
   const [userJson, setUserData] = useState<string | null>(null);
-  const user: LoginData | null = userJson 
+  const user = userJson 
     ? JSON.parse(userJson)
     : null
   ;

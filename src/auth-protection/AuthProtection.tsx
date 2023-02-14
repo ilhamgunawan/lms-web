@@ -1,9 +1,6 @@
 import React, { ReactNode } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from 'react-query';
-import { AxiosError, AxiosResponse } from 'axios';
-import { ErrorResponse } from '../../api/global';
-import { fetchValidateSession, ValidateSessionResponse } from '../../api/auth';
+import { ValidateToken } from '../../services/react-query/auth';
 import LoadingScreen from '../loading/LoadingScreen';
 import GeneralErrorScreen from '../error/GeneralErrorScreen';
 
@@ -24,15 +21,15 @@ const initialState: State = {
 export default function AuthProtection(props: Props) {
   const router = useRouter();
   const [state, setState] = React.useState(initialState);
-  const validateSession = useMutation(fetchValidateSession, {
-    onError: (error: AxiosError<ErrorResponse>, _variables, _context) => {
+  const validateSession = ValidateToken({
+    onError: () => {
       setState({
         status: 'ERROR',
         session: 'INVALID',
       });
       router.replace('/auth/login');
     },
-    onSuccess: (_res: AxiosResponse<ValidateSessionResponse>, _variables, _context) => {
+    onSuccess: () => {
       setState({
         status: 'SUCCESS',
         session: 'VALID',
@@ -41,7 +38,9 @@ export default function AuthProtection(props: Props) {
   });
 
   React.useEffect(() => {
-    validateSession.mutate();
+    validateSession.mutate({ token: window.localStorage.getItem('token') ?? '' });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   switch(state.status) {
@@ -61,7 +60,7 @@ export default function AuthProtection(props: Props) {
         <GeneralErrorScreen 
           title="Something wen't wrong" 
           body='Please try again' 
-          onRetry={() => validateSession.mutate()} 
+          onRetry={() => validateSession.mutate({ token: window.localStorage.getItem('token') ?? '' })} 
         />
       );
     default:

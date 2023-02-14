@@ -1,10 +1,6 @@
 import React, { ReactNode, useReducer, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useMutation } from 'react-query';
-import { AxiosError, AxiosResponse } from 'axios';
 import { useToast, Spinner } from '@chakra-ui/react';
-import { ErrorResponse } from '../../api/global';
-import { CurrentRoleResponse, fetchCurrentRole } from '../../api/auth';
 import { reducer, onStateChange, initialState, Protection } from './route-protection-reducer';
 import LoadingScreen from '../loading/LoadingScreen';
 import GeneralErrorScreen from '../error/GeneralErrorScreen';
@@ -27,35 +23,35 @@ export default function RouteProtection(props: Props) {
   const router = useRouter();
   const toast = useToast();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const currentRole = useMutation(fetchCurrentRole, {
-    onError: (error: AxiosError<ErrorResponse>, _variables, _context) => {
-      dispatch({
-        type: 'FETCH_CURRENT_ROLE_ERROR',
-        payload: {
-          protection: 'UNDEFINED',
-          error: {
-            code: error.response ? error.response.data.code : '',
-            message: error.response ? error.response.data.message : '',
-          },
-        },
-      });
-    },
-    onSuccess: (res: AxiosResponse<CurrentRoleResponse>, _variables, _context) => {
-      dispatch({
-        type: 'FETCH_CURRENT_ROLE_SUCCESS',
-        payload: {
-          protection: validateRoles(props.allowedRoles, res.data.data.role.name),
-          error: {
-            code: '',
-            message: '',
-          },
-        },
-      });
-    },
-  });
+  // const currentRole = useMutation(fetchCurrentRole, {
+  //   onError: (error: AxiosError<any>, _variables, _context) => {
+  //     dispatch({
+  //       type: 'FETCH_CURRENT_ROLE_ERROR',
+  //       payload: {
+  //         protection: 'UNDEFINED',
+  //         error: {
+  //           code: error.response ? error.response.data.code : '',
+  //           message: error.response ? error.response.data.message : '',
+  //         },
+  //       },
+  //     });
+  //   },
+  //   onSuccess: (res: AxiosResponse<CurrentRoleResponse>, _variables, _context) => {
+  //     dispatch({
+  //       type: 'FETCH_CURRENT_ROLE_SUCCESS',
+  //       payload: {
+  //         protection: validateRoles(props.allowedRoles, res.data.data.role.name),
+  //         error: {
+  //           code: '',
+  //           message: '',
+  //         },
+  //       },
+  //     });
+  //   },
+  // });
 
   const reducerConfig = {
-    currentRoleFetcher: () => currentRole.mutate(),
+    currentRoleFetcher: () => {},
     router: router,
     useToast: toast,
   };

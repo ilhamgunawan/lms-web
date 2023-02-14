@@ -25,8 +25,6 @@ import { FaPowerOff } from 'react-icons/fa';
 import { useMutation } from 'react-query';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useRouter } from 'next/router';
-import { ErrorResponse } from '../../api/global';
-import { fetchLogout, LogoutResponse } from '../../api/auth';
 
 type Props = {
   name: string;
@@ -40,23 +38,23 @@ export default function MenuDropdown({ name, avatarUrl }: Props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef();
 
-  const logout = useMutation(fetchLogout, {
-    onError: (error: AxiosError<ErrorResponse>, _variables, _context) => {
-      toast({
-        status: 'error',
-        title: error.response?.data.message,
-        position: 'top',
-      });
-    },
-    onSuccess: (_res: AxiosResponse<LogoutResponse>, _variables, _context) => {
-      window.localStorage.removeItem('menus');
-      router.replace('/auth/login');
-    },
-  });
+  // const logout = useMutation(fetchLogout, {
+  //   onError: (error: AxiosError<ErrorResponse>, _variables, _context) => {
+  //     toast({
+  //       status: 'error',
+  //       title: error.response?.data.message,
+  //       position: 'top',
+  //     });
+  //   },
+  //   onSuccess: (_res: AxiosResponse<LogoutResponse>, _variables, _context) => {
+  //     window.localStorage.removeItem('menus');
+  //     router.replace('/auth/login');
+  //   },
+  // });
 
   function handleLogout() {
     onClose();
-    logout.mutate();
+    // logout.mutate();
   }
 
   return (

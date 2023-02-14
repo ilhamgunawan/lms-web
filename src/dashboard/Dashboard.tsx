@@ -1,4 +1,3 @@
-import { LoginData } from '../../api/auth';
 import DashboardContent from './DashboardContent';
 import { FaUser, FaBook, FaBookOpen } from 'react-icons/fa';
 
@@ -54,7 +53,7 @@ function getMenusByRole(role: string) {
 
 export default function Dashboard() {
   const userJSON = window.localStorage.getItem('user');
-  const user: LoginData | null = userJSON 
+  const user = userJSON 
     ? JSON.parse(userJSON)
     : null
   ;

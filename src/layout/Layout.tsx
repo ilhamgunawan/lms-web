@@ -5,7 +5,6 @@ import React, {
   useState,
   MouseEvent, 
 } from 'react';
-import { useMutation } from 'react-query';
 import { Config, getIcon } from '../../common/utils';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
@@ -39,10 +38,6 @@ import {
   FiChevronDown,
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
-import { AxiosError, AxiosResponse } from 'axios';
-import { ErrorResponse } from '../../api/global';
-import { Menu as MenuResponseItem } from '../../api/menus';
-import { fetchLogout, LogoutResponse, LoginData } from '../../api/auth';
 
 export default function Sidebar({
   config,
@@ -89,7 +84,7 @@ interface SidebarProps extends BoxProps {
   title: string;
 }
 
-function getMenus(): Array<MenuResponseItem> {
+function getMenus(): Array<any> {
   if (window) {
     const menusJSON = window.localStorage.getItem('menus');
     const menus = menusJSON ? JSON.parse(menusJSON) : [];
@@ -100,7 +95,7 @@ function getMenus(): Array<MenuResponseItem> {
 }
 
 const SidebarContent = ({ title, onClose, ...rest }: SidebarProps) => {
-  const [menus, setMenus] = useState<Array<MenuResponseItem> | null>(null);
+  const [menus, setMenus] = useState<Array<any> | null>(null);
 
   useEffect(() => {
     setMenus(getMenus());
@@ -192,27 +187,27 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const router = useRouter();
   const toast = useToast();
   const userJSON = window.localStorage.getItem('user');
-  const user: LoginData | null = userJSON 
+  const user = userJSON 
     ? JSON.parse(userJSON)
     : null
   ;
 
-  const logout = useMutation(fetchLogout, {
-    onError: (error: AxiosError<ErrorResponse>, _variables, _context) => {
-      toast({
-        status: 'error',
-        title: error.response?.data.message,
-        position: 'top',
-      });
-    },
-    onSuccess: (_res: AxiosResponse<LogoutResponse>, _variables, _context) => {
-      window.localStorage.removeItem('menus');
-      router.replace('/auth/login');
-    },
-  });
+  // const logout = useMutation(fetchLogout, {
+  //   onError: (error: AxiosError<any>, _variables, _context) => {
+  //     toast({
+  //       status: 'error',
+  //       title: error.response?.data.message,
+  //       position: 'top',
+  //     });
+  //   },
+  //   onSuccess: (_res: AxiosResponse<LogoutResponse>, _variables, _context) => {
+  //     window.localStorage.removeItem('menus');
+  //     router.replace('/auth/login');
+  //   },
+  // });
 
   function handleLogout(_e: MouseEvent) {
-    logout.mutate();
+    // logout.mutate();
   }
 
   return (

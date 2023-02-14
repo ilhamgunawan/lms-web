@@ -1,7 +1,6 @@
 import { Dispatch } from 'react';
 import { NextRouter } from 'next/router';
 import { UseToastOptions } from '@chakra-ui/react';
-import { ErrorResponse } from '../../api/global';
 
 export type StateType = 
   | 'INITIAL'
@@ -19,7 +18,7 @@ export type Protection = | 'UNDEFINED' | 'ACCEPT' | 'DENY';
 
 export interface Payload {
   protection: Protection;
-  error?: ErrorResponse;
+  error?: any;
 }
 
 export interface State {

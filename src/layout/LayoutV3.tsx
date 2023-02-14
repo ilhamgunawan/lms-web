@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { AppShell, Navbar, Header } from '@mantine/core';
+import { AppShell } from '@mantine/core';
 import NavbarSimple from './Navbar';
 import HeaderSimple from './Header';
 

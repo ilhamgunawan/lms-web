@@ -1,18 +1,17 @@
 import { Dispatch } from "react";
-import { Menu } from '../../api/menus';
 
 export type StateType = 'INITIAL' | 'FETCHING_MENUS' | 'FETCHING_MENUS_SUCCESS' | 'FETCHING_MENUS_ERROR';
 
 export interface State {
   type: StateType;
-  menus?: Array<Menu>;
+  menus?: Array<any>;
   error?: string;
 }
 
 export type ActionType = 'INITIALIZE' | 'FETCH_MENUS' | 'FETCH_MENUS_SUCCESS' | 'FETCH_MENUS_ERROR';
 
 export interface ActionPayload {
-  menus?: Array<Menu>;
+  menus?: Array<any>;
   error?: string;
 }
 
