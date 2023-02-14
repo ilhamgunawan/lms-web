@@ -1,6 +1,10 @@
 import { AxiosResponse } from "axios";
 import { fetchClient } from "../fetch";
-import { GetUsersRequest, GetUsersResponse } from "../../models/api/users";
+import { 
+  GetUsersRequest, 
+  GetUsersResponse,
+  CreateUserRequest,
+} from "../../models/api/users";
 
 export const getUsers = async (req: GetUsersRequest): Promise<AxiosResponse<GetUsersResponse>> => {
   const limit = 10;
@@ -9,5 +13,13 @@ export const getUsers = async (req: GetUsersRequest): Promise<AxiosResponse<GetU
   return fetchClient({
     url: `/api/v1/users?limit=${limit}&offset=${offset}`,
     method: 'get',
+  });
+}
+
+export const createUser = async (req: CreateUserRequest) => {
+  return fetchClient({
+    url: '/api/v1/users/create',
+    method: 'post',
+    data: req,
   });
 }
