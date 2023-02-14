@@ -20,3 +20,20 @@ export interface User {
   gender: 'm' | 'f'
   date_of_birth: string
 }
+
+export interface CreateUserRequest {
+  first_name: string
+  last_name: string
+  gender: string
+  user_name: string
+  password: string
+  date_of_birth: string
+}
+
+export interface CreateUserData extends User {
+  user_name: string
+}
+
+export interface CreateUserResponse {
+  data: CreateUserData
+}
