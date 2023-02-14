@@ -1,15 +1,15 @@
 import { useRouter } from 'next/router';
 import { Pagination, Paper, Table } from '@mantine/core';
-import { GetAllUsersData } from '../../api/users';
+import { GetUsersResponse } from '../../models/api/users';
 
 type Props = {
   page: number
-  getAllUsersData: GetAllUsersData
+  data: GetUsersResponse
 }
 
-export default function UsersTable({ page, getAllUsersData }: Props) {
+export default function UsersTable({ page, data }: Props) {
   const router = useRouter();
-  const columns = Object.keys(getAllUsersData.data.users[0]).filter(col => col !== 'id');
+  const columns = Object.keys(data.data.users[0]).filter(col => col !== 'id');
 
   return (
     <Paper shadow="sm" p="lg">
@@ -23,7 +23,7 @@ export default function UsersTable({ page, getAllUsersData }: Props) {
             })}
           </tr>
         </thead>
-        <tbody>{getAllUsersData.data.users.map(user => {
+        <tbody>{data.data.users.map(user => {
           const u = user as any;
           return (
             <tr key={user.id}>
@@ -38,7 +38,7 @@ export default function UsersTable({ page, getAllUsersData }: Props) {
       </Table>
       <Pagination
         page={page}
-        total={getAllUsersData.data.total_page}
+        total={data.data.total_page}
         onChange={(nextValue) => {
           router.push(`${router.route}?page=${nextValue}`);
         }}

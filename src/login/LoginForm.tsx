@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { useMutation } from 'react-query';
 import { AxiosError } from 'axios';
 import {
   Alert,
@@ -21,8 +20,8 @@ import {
   IconAt,
   IconLock,
 } from '@tabler/icons';
-import { postAuthLogin } from '../../api/auth';
 import appRoutes from '../../routes';
+import { Login } from '../../services/react-query/auth';
 
 type Props = {
   disabled: boolean
@@ -42,13 +41,8 @@ export default function LoginForm({ disabled }: Props) {
     },
   });
 
-  const { isLoading: isLoadingPostLogin, mutate, error } = useMutation(postAuthLogin, {
-    onError: (error , _variables, _context) => {
-      // console.log('error', error);
-    },
-    onSuccess: (res , _variables, _context) => {
-      // console.log('success', res);
-      
+  const { isLoading: isLoadingPostLogin, mutate, error } = Login({
+    onSuccess: (res) => {
       if (res.data) {
         window.localStorage.setItem('user', JSON.stringify(res.data.data));
         window.localStorage.setItem('token', res.data.data.token);

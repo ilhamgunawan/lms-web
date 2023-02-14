@@ -2,10 +2,10 @@ import type { GetServerSideProps } from 'next';
 import type { Config } from '../common/utils';
 import NextHead from 'next/head';
 import { getConfig } from '../common/utils';
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import appRoutes from '../routes';
-import useValidateToken from '../hooks/useValidateToken';
+import { ValidateToken } from '../services/react-query/auth';
 import {
   Container,
   Flex,
@@ -28,17 +28,13 @@ export const getServerSideProps: GetServerSideProps = async (_context) => {
 export default function Index(props: PageProps) {
   const router = useRouter();
 
-  const { validate } = useValidateToken({
-    onError: (e) => {
-      router.replace(appRoutes.login.path);
-    },
-    onSuccess: (res) => {
-      router.replace(appRoutes.dashboard.path);
-    },
+  const { mutate: validate } = ValidateToken({
+    onError: () => router.replace(appRoutes.login.path),
+    onSuccess: () => router.replace(appRoutes.dashboard.path),
   });
 
   useEffect(() => {
-    validate();
+    validate({ token: window.localStorage.getItem('token') ?? '' });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

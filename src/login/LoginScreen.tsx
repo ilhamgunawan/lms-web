@@ -5,20 +5,18 @@ import {
   Flex,
 } from '@mantine/core';
 import LoginForm from './LoginForm';
-import useValidateToken from '../../hooks/useValidateToken';
 import appRoutes from '../../routes';
+import { ValidateToken } from '../../services/react-query/auth';
 
 export default function LoginLayout() {
   const router = useRouter();
 
-  const { isLoading, validate } = useValidateToken({
-    onSuccess: (res) => {
-      router.replace(appRoutes.dashboard.path);
-    },
+  const { isLoading, mutate: validate } = ValidateToken({
+    onSuccess: () => router.replace(appRoutes.dashboard.path),
   });
 
   useEffect(() => {
-    validate();
+    validate({token: window.localStorage.getItem('token') ?? ''});
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
