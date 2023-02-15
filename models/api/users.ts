@@ -37,3 +37,17 @@ export interface CreateUserData extends User {
 export interface CreateUserResponse {
   data: CreateUserData
 }
+
+export interface UpdateUserRequest extends User {}
+
+export interface UpdateUserResponse {
+  data: User
+}
+
+export interface DeleteUserRequest {
+  id: string
+}
+
+export interface DeleteUserRespone {
+  data: any
+}
