@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import { AxiosError } from 'axios';
 import {
   Alert,
@@ -28,8 +27,6 @@ type Props = {
 };
 
 export default function LoginForm({ disabled }: Props) {
-  const router = useRouter();
-
   const form = useForm({
     initialValues: {
       user_name: '',
@@ -46,7 +43,7 @@ export default function LoginForm({ disabled }: Props) {
       if (res.data) {
         window.localStorage.setItem('user', JSON.stringify(res.data.data));
         window.localStorage.setItem('token', res.data.data.token);
-        router.replace(appRoutes.dashboard.path);
+        window.location.replace(appRoutes.dashboard.path);
       }
     },
   });
