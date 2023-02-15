@@ -44,10 +44,8 @@ export interface UpdateUserResponse {
   data: User
 }
 
-export interface DeleteUserRequest {
-  id: string
-}
+export interface DeleteUserRequest extends User {}
 
 export interface DeleteUserRespone {
-  data: any
+  data: User
 }
