@@ -16,6 +16,7 @@ import {
 import { MantineLogo } from '@mantine/ds';
 import { useRouter } from 'next/router';
 import appRoutes, { makeRouteNameFromPath } from '../../routes';
+import LogOutModal from './LogOutModal';
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const icon = getRef('icon');
@@ -111,6 +112,10 @@ export default function NavbarSimple() {
     </a>
   ));
 
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const openLogoutModal = () => setShowLogoutModal(true);
+  const closeLogoutModal = () => setShowLogoutModal(false);
+
   return (
     <Navbar width={{ sm: 300 }} p="md">
       <Navbar.Section grow>
@@ -123,10 +128,19 @@ export default function NavbarSimple() {
           <span>Change account</span>
         </a>
 
-        <a href="#" className={classes.link} onClick={(event) => event.preventDefault()}>
+        <a 
+          href="#" 
+          className={classes.link} 
+          onClick={(event) => {
+            event.preventDefault();
+            openLogoutModal();
+          }}
+        >
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
         </a>
+
+        <LogOutModal showModal={showLogoutModal} closeModal={closeLogoutModal} />
       </Navbar.Section>
     </Navbar>
   );
