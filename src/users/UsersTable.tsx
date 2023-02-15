@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
-import { Pagination, Paper, Table } from '@mantine/core';
 import { GetUsersResponse } from '../../models/api/users';
+
+import { Pagination, Paper, Table } from '@mantine/core';
+import UsersTableItem from './UsersTableItem';
 
 type Props = {
   page: number
@@ -21,20 +23,14 @@ export default function UsersTable({ page, data }: Props) {
                 <th key={column}>{column.toUpperCase().replaceAll('_', ' ')}</th>
               )
             })}
+            <th></th>
           </tr>
         </thead>
-        <tbody>{data.data.users.map(user => {
-          const u = user as any;
-          return (
-            <tr key={user.id}>
-              {columns.map((column) => {
-                return (
-                  <td key={`${user}_${column}`}>{u[column]}</td>
-                )
-              })}
-            </tr>
-          )
-        })}</tbody>
+        <tbody>
+          {data.data.users.map(user => 
+            <UsersTableItem key={user.id} user={user} columns={columns} />
+          )}
+        </tbody>
       </Table>
       <Pagination
         page={page}
