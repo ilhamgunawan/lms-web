@@ -1,5 +1,6 @@
 import type { AppProps } from 'next/app';
 import { MantineProvider } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
 // import { ChakraProvider } from '@chakra-ui/react';
 // import NextNProgress from 'nextjs-progressbar';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -17,7 +18,9 @@ function MyApp({ Component, pageProps }: AppProps) {
           colorScheme: 'light',
         }}
       >
-        <Component {...pageProps} />
+        <NotificationsProvider>
+          <Component {...pageProps} />
+        </NotificationsProvider>
       </MantineProvider>
       {/* <ChakraProvider>
         <NextNProgress
