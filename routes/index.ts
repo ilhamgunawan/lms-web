@@ -11,6 +11,10 @@ const appRoutes = {
     name: 'Users Management',
     path: '/users',
   },
+  course: {
+    name: 'Course Management',
+    path: '/courses',
+  },
   settings: {
     name: 'Settings',
     path: '/settings',
@@ -27,6 +31,8 @@ export function makeRouteNameFromPath(currentPath: string) {
       return appRoutes.users.name;
     case appRoutes.settings.path:
       return appRoutes.settings.name;
+    case appRoutes.course.path:
+      return appRoutes.course.name;
     default:
       return '';
   }

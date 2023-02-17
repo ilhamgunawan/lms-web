@@ -1,14 +1,9 @@
 import { useState } from 'react';
-import { createStyles, Navbar, Group, Code } from '@mantine/core';
+import { createStyles, Navbar } from '@mantine/core';
 import {
-  IconBellRinging,
+  IconBook,
   IconDashboard,
-  IconFingerprint,
-  IconKey,
   IconSettings,
-  Icon2fa,
-  IconDatabaseImport,
-  IconReceipt2,
   IconSwitchHorizontal,
   IconLogout,
   IconUsers,
@@ -80,12 +75,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
 const data = [
   { link: appRoutes.dashboard.path, label: appRoutes.dashboard.name, icon: IconDashboard},
   { link: appRoutes.users.path, label: appRoutes.users.name, icon: IconUsers},
-  // { link: '', label: 'Notifications', icon: IconBellRinging },
-  // { link: '', label: 'Billing', icon: IconReceipt2 },
-  // { link: '', label: 'Security', icon: IconFingerprint },
-  // { link: '', label: 'SSH Keys', icon: IconKey },
-  // { link: '', label: 'Databases', icon: IconDatabaseImport },
-  // { link: '', label: 'Authentication', icon: Icon2fa },
+  { link: appRoutes.course.path, label: appRoutes.course.name, icon: IconBook },
   { link: appRoutes.settings.path, label: appRoutes.settings.name, icon: IconSettings },
 ];
 
