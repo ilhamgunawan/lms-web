@@ -25,6 +25,8 @@ import { Login } from '../../services/react-query/auth';
 import { useMachine } from '@xstate/react';
 import { loginMachine } from './loginMachine';
 
+import useStore from '../../stores';
+
 type Props = {
   disabled: boolean
 };
@@ -42,6 +44,7 @@ export default function LoginForm({ disabled }: Props) {
   });
 
   const [current, send] = useMachine(loginMachine);
+  const setMyAccount = useStore(state => state.setMyAccount);
 
   const { mutate: login, error } = Login({
     onSuccess: (res) => {
@@ -50,12 +53,15 @@ export default function LoginForm({ disabled }: Props) {
         window.localStorage.setItem('token', res.data.data.token);
         window.location.replace(appRoutes.dashboard.path);
         send('FETCH_SUCCESS');
+        setMyAccount(res.data.data);
       } else {
         send('FETCH_ERROR');
+        setMyAccount(undefined);
       }
     },
     onError: () => {
       send('FETCH_ERROR');
+      setMyAccount(undefined);
     },
   });
 
