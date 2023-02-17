@@ -25,6 +25,9 @@ import {
   IconLock,
 } from '@tabler/icons';
 
+import { useMachine } from '@xstate/react';
+import { createUserMachine } from './createUserMachine';
+
 type Props = {
   closeModal: () => void
 }
@@ -50,12 +53,14 @@ export default function CreateUserForm({ closeModal }: Props) {
 
   const router = useRouter();
 
-  const { isLoading, mutate: createUser, error } = CreateUser({
+  const { mutate: createUser, error } = CreateUser({
     onSuccess: () => {
+      send('FETCH_SUCCESS');
       closeModal();
       router.push(appRoutes.users.path);
     },
     onError: (error) => {
+      send('FETCH_ERROR');
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           router.replace(appRoutes.login.path);
@@ -64,17 +69,26 @@ export default function CreateUserForm({ closeModal }: Props) {
     },
   });
 
+  const [current, send] = useMachine(createUserMachine);
+
   const errorMessage = error instanceof AxiosError
-    ? (error.response?.data.message as string | undefined)
-    : undefined;
+    ? (error.response?.data?.message as string | undefined)
+    : 'Something went wrong, please try again';
+
+  const isLoading = current.matches('fetchingCreateUserPending');
 
   return (
-    <form onSubmit={form.onSubmit((values) => createUser(values))}>
+    <form 
+      onSubmit={form.onSubmit((values) => {
+        send('FETCH_START');
+        createUser(values);
+      })}
+    >
       <Flex
         direction="column"
         gap="xs"
       >
-        {errorMessage 
+        {current.matches('fetchingCreateUserFailed') 
           ? <Alert icon={<IconAlertCircle size="16px" />} title="Log in failed!" color="red">
               {errorMessage}
             </Alert>
