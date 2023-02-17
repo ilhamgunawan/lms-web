@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { GetServerSideProps } from "next/types";
-import { Loader } from "@mantine/core";
+import { Loader, Text, Space } from "@mantine/core";
 import { useRouter } from "next/router";
 
 import appRoutes from "../../routes";
@@ -37,7 +37,8 @@ export default function UsersManagementPage() {
 
   return (
     <Layout>
-      <h1>Users Management</h1>
+      <Text color="dark" fz="xl" fw="bold">{appRoutes.users.name}</Text>
+      <Space h="xs" />
       <CreateUser />
       {isLoading ? <Loader /> : null}
       {data?.data.data
