@@ -22,6 +22,9 @@ import {
 import appRoutes from '../../routes';
 import { Login } from '../../services/react-query/auth';
 
+import { useMachine } from '@xstate/react';
+import { loginMachine } from './loginMachine';
+
 type Props = {
   disabled: boolean
 };
@@ -38,30 +41,43 @@ export default function LoginForm({ disabled }: Props) {
     },
   });
 
-  const { isLoading: isLoadingPostLogin, mutate, error } = Login({
+  const [current, send] = useMachine(loginMachine);
+
+  const { mutate: login, error } = Login({
     onSuccess: (res) => {
       if (res.data) {
         window.localStorage.setItem('user', JSON.stringify(res.data.data));
         window.localStorage.setItem('token', res.data.data.token);
         window.location.replace(appRoutes.dashboard.path);
+        send('FETCH_SUCCESS');
+      } else {
+        send('FETCH_ERROR');
       }
+    },
+    onError: () => {
+      send('FETCH_ERROR');
     },
   });
 
   const errorMessage = error instanceof AxiosError
-    ? (error.response?.data.message as string | undefined)
-    : undefined;
+    ? (error.response?.data?.message as string | undefined)
+    : 'Something went wrong, please try again';
 
-  const isLoading = isLoadingPostLogin || disabled;
+  const isLoading = current.matches('fetchingLoginPending') || disabled;
 
   return (
     <Paper shadow="md" p="md" w="350px" maw="100%">
-      <form onSubmit={form.onSubmit((values) => mutate(values))}>
+      <form 
+        onSubmit={form.onSubmit((values) => {
+          send('FETCH_START');
+          login(values);
+        })}
+      >
         <Flex
           direction="column"
           gap="xs"
         >
-          {errorMessage 
+          {current.matches('fetchingLoginFailed')
             ? <Alert icon={<IconAlertCircle size="16px" />} title="Log in failed!" color="red">
                 {errorMessage}
               </Alert>

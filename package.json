@@ -33,7 +33,7 @@
     "@tiptap/extension-link": "^2.0.0-beta.213",
     "@tiptap/react": "^2.0.0-beta.213",
     "@tiptap/starter-kit": "^2.0.0-beta.213",
-    "@xstate/react": "^3.0.0",
+    "@xstate/react": "^3.2.1",
     "axios": "^0.27.2",
     "dayjs": "^1.11.7",
     "embla-carousel-react": "^7.0.9",
@@ -46,7 +46,8 @@
     "react-icons": "^4.3.1",
     "react-query": "^3.38.0",
     "universal-cookie": "^4.0.4",
-    "xstate": "^4.32.1"
+    "xstate": "^4.32.1",
+    "zustand": "^4.3.3"
   },
   "devDependencies": {
     "@types/node": "17.0.24",

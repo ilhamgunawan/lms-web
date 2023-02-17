@@ -7,6 +7,7 @@ const fetchClient = axios.create({
   responseType: 'json',
   headers: {
     'Authorization': token,
+    'Accept': '*/*',
   },
 });
 
