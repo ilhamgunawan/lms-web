@@ -5,6 +5,7 @@ import {
   FiUserCheck,
   FiBookOpen,
 } from 'react-icons/fi';
+import { AxiosError } from 'axios';
 
 export interface Config {
   siteName: string;
@@ -33,3 +34,28 @@ export const getIcon = (name: string) => {
       return FiHome;
   }
 };
+
+const generalErrorMessage = 'Something went wrong, please try again';
+const networkError = 'Please check your internet connection and try again';
+
+export function getMessageFromError(error: unknown): string {
+  if (!error) return '';
+
+  if (error instanceof AxiosError) {
+    // console.log('error', error);
+
+    if (error.code === 'ERR_NETWORK') return networkError;
+
+    if (error.response?.data) {
+      const data = error.response.data;
+
+      if (typeof data.message === 'string') return data.message;
+
+      return generalErrorMessage;
+    }
+
+    return generalErrorMessage;
+  }
+
+  return generalErrorMessage;
+}
