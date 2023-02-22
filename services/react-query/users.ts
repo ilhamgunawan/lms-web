@@ -17,7 +17,7 @@ export const GetUsers = ({
   onSuccess, 
   onError,
 }: QueryParams<GetUsersRequest, GetUsersResponse>) => {
-  const key = `GetUsers?page=${req?.page}`;
+  const key = ['GetUsers', req?.page];
   return useQuery(key, () => getUsers({ page: req?.page ?? 1 }), {
     onError,
     onSuccess,

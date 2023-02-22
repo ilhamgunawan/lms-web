@@ -25,6 +25,9 @@ import {
   IconDeviceFloppy,
 } from '@tabler/icons';
 
+import { useQueryClient } from 'react-query';
+import { getMessageFromError } from '../../common/utils';
+
 type Props = {
   closeModal: () => void
   user: UpdateUserRequest
@@ -47,10 +50,12 @@ export default function UpdateUserForm({ closeModal, user }: Props) {
   });
 
   const router = useRouter();
+  const qc = useQueryClient();
 
   const { isLoading, mutate: updateUser, error } = UpdateUser({
     onSuccess: () => {
       router.push(appRoutes.users.path);
+      qc.refetchQueries(['GetUsers', 1]);
       closeModal();
       showNotification({
         title: 'Success',
@@ -66,9 +71,7 @@ export default function UpdateUserForm({ closeModal, user }: Props) {
     },
   });
 
-  const errorMessage = error instanceof AxiosError
-    ? (error.response?.data.message as string | undefined)
-    : undefined;
+  const errorMessage = getMessageFromError(error);
 
   return (
     <form 

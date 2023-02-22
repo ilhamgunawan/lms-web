@@ -25,8 +25,8 @@ import {
   IconLock,
 } from '@tabler/icons';
 
-import { useMachine } from '@xstate/react';
-import { createUserMachine } from './createUserMachine';
+import { useQueryClient } from 'react-query';
+import { getMessageFromError } from '../../common/utils';
 
 type Props = {
   closeModal: () => void
@@ -52,15 +52,15 @@ export default function CreateUserForm({ closeModal }: Props) {
   });
 
   const router = useRouter();
+  const qc = useQueryClient();
 
-  const { mutate: createUser, error } = CreateUser({
+  const { mutate: createUser, error, isLoading } = CreateUser({
     onSuccess: () => {
-      send('FETCH_SUCCESS');
       closeModal();
       router.push(appRoutes.users.path);
+      qc.refetchQueries(['GetUsers', 1]);
     },
     onError: (error) => {
-      send('FETCH_ERROR');
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           router.replace(appRoutes.login.path);
@@ -69,26 +69,17 @@ export default function CreateUserForm({ closeModal }: Props) {
     },
   });
 
-  const [current, send] = useMachine(createUserMachine);
-
-  const errorMessage = error instanceof AxiosError
-    ? (error.response?.data?.message as string | undefined)
-    : 'Something went wrong, please try again';
-
-  const isLoading = current.matches('fetchingCreateUserPending');
+  const errorMessage = getMessageFromError(error);
 
   return (
     <form 
-      onSubmit={form.onSubmit((values) => {
-        send('FETCH_START');
-        createUser(values);
-      })}
+      onSubmit={form.onSubmit((values) => createUser(values))}
     >
       <Flex
         direction="column"
         gap="xs"
       >
-        {current.matches('fetchingCreateUserFailed') 
+        {errorMessage !== ''
           ? <Alert icon={<IconAlertCircle size="16px" />} title="Log in failed!" color="red">
               {errorMessage}
             </Alert>

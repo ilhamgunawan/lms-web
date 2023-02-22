@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { GetServerSideProps } from "next/types";
-import { Loader, Text, Space } from "@mantine/core";
+import { Flex, Loader, Text, Space } from "@mantine/core";
 import { useRouter } from "next/router";
 
 import appRoutes from "../../routes";
@@ -24,7 +24,7 @@ export default function UsersManagementPage() {
   const router = useRouter();
   const page = router.query.page ? parseInt(router.query.page as string) : 1;
 
-  const { isLoading, data } = GetUsers({
+  const { data, isFetching } = GetUsers({
     req: { page },
     onError: (err) => {
       if (err instanceof AxiosError) {
@@ -40,7 +40,11 @@ export default function UsersManagementPage() {
       <Text color="dark" fz="xl" fw="bold">{appRoutes.users.name}</Text>
       <Space h="xs" />
       <CreateUser />
-      {isLoading ? <Loader /> : null}
+      {isFetching
+        ? <Flex>
+            <Loader />
+          </Flex>
+        : null}
       {data?.data.data
         ? <UsersTable
             page={page}
