@@ -1,6 +1,7 @@
 import axios from 'axios';
+import useStore from '../stores';
 
-const token = global.window ? window.localStorage.getItem('token') ?? '' : '';
+const token = useStore.getState().myAccount?.token ?? '';
 
 const fetchClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_ENDPOINT,
