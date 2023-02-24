@@ -16,29 +16,28 @@ export function getErrorMessage(err: unknown): string {
   } else if (err instanceof Error) {
     return err.message && typeof err.message === 'string' ? err.message : messages.general
   } else {
-    return messages.general;
+    return '';
   }
 }
 
 function getAxiosErrorMessage(err: AxiosError<any>): string {
-  let message: string;
+  let message = messages.general;
 
-  if (err.response) {
+  if (err.response?.data) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
     const data = err.response.data;
 
     if (data && data.message && typeof data.message === 'string') {
       message = data.message;
-    } else {
-      message = messages.general;
     }
 
-  } else if (err.request) {
-    // The request was made but no response was received
-    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-    // http.ClientRequest in node.js
-    message = err.message;
+  } else if (err.code) {
+    
+    if (err.code === 'ERR_NETWORK') {
+      message = messages.networkIssue;
+    }
+
   } else {
     // Something happened in setting up the request that triggered an Error
     message = err.message;
