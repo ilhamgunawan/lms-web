@@ -23,7 +23,7 @@ import appRoutes from '../../routes';
 import { Login } from '../../services/react-query/auth';
 
 import useStore from '../../stores';
-import { getMessageFromError } from '../../common/utils';
+import { getErrorMessage } from '../../utils/error';
 
 type Props = {
   disabled: boolean
@@ -59,7 +59,7 @@ export default function LoginForm({ disabled }: Props) {
     },
   });
 
-  const errorMessage = getMessageFromError(error);
+  const errorMessage = getErrorMessage(error);
 
   const isLoading = isLoadingLogin|| disabled;
 

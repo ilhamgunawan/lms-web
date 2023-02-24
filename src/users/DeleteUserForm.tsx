@@ -22,7 +22,7 @@ import {
 } from '@tabler/icons';
 
 import { useQueryClient } from 'react-query';
-import { getMessageFromError } from '../../common/utils';
+import { getErrorMessage } from '../../utils/error';
 
 type Props = {
   closeModal: () => void
@@ -61,7 +61,7 @@ export default function DeleteUserForm({ closeModal, user }: Props) {
     },
   });
 
-  const errorMessage = getMessageFromError(error)
+  const errorMessage = getErrorMessage(error)
 
   return (
     <form 
