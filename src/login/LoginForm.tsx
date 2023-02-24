@@ -42,20 +42,22 @@ export default function LoginForm({ disabled }: Props) {
   });
 
   const setMyAccount = useStore(state => state.setMyAccount);
+  const setIsLoggedIn = useStore(state => state.setIsLoggedIn);
 
   const { mutate: login, error, isLoading: isLoadingLogin } = Login({
     onSuccess: (res) => {
       if (res.data) {
-        window.localStorage.setItem('user', JSON.stringify(res.data.data));
-        window.localStorage.setItem('token', res.data.data.token);
-        window.location.replace(appRoutes.dashboard.path);
         setMyAccount(res.data.data);
+        setIsLoggedIn(true);
+        window.location.replace(appRoutes.dashboard.path);
       } else {
         setMyAccount(undefined);
+        setIsLoggedIn(false);
       }
     },
     onError: () => {
       setMyAccount(undefined);
+      setIsLoggedIn(false);
     },
   });
 
